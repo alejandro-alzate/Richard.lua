@@ -10,6 +10,8 @@ A rich text format parser
 - [Getting started](#setting_started)
 - [Documentation](#documentation)
 ## To do
+- [ ] BBCode
+- [ ] Nested tags
 ## Features
 ## Flaws
 ## Getting started

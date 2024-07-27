@@ -1,0 +1,39 @@
+
+That's a cool IDE, it shows a stack / debug info, very useful. I code in Notepad++ like a peasant, it's just the text and that's it.
+
+
+Now parsed nodes work but the output is still nil, also i did a conscious decision of when there's no subtitle present at the time return an empty string witch ensures the same result as nil but avoiding to deal with nil on love.graphics.print() since for what i remember it doesn't like it
+
+That's a good debate, should it return nil or an empty string when the current time isn't sampling any subtitle nodes (i.e. the blank time between nodes) ?
+
+There are good reasons for either case: return an empty string so you can plug :getText() directly into love.graphics.print() and not have to worry about it returning nil:
+-- If returning an empty string.
+love.graphics.print(mySubtitle:getText(), ...)
+
+Or, return nil in case you want to use it in boolean expressions, as only false and nil are falsy values in Lua. Everything else, including zero and empty strings, are truthy.
+-- If returning nil.
+local text = mySubtitle:getText()
+if text then
+    love.graphics.print(text, ...)
+end
+PS there was a bug with nil indexes, I updated that code with it.
+
+
+In the IDE: that ide is called ZeroBraneStudio (For me is 0 brain studio lol) my choice is sublime but when a bug escapes my comprehension i go to zbstudio
+In the debate: my library spits an empty string when there's no sub available in the time this ensures that the font methods getWidth and getHeight doesn't brick itself, and "as only false and nil are falsy values in Lua. Everything else, including zero and empty strings, are truthy." for what i know 0 is treated as false as well, i might check but that is what i remember
+I checked I've lived in a lie :cry: :
+
+Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio
+> if 0 then
+>> print("true")
+>> else
+>> print("false")
+>> end
+true
+
+I know the clear oversight of an actual caption with and empty line but then that caption line is usseless anyway, so why bother for a real empty string.
+my take when i do a check is
+
+local isTextPresent = mySub:getText() ~= ""
+
+so i really want to keep the "empty string" behavior, since that bloated parse fucntion that you pointed out  the first thing that will do is just clearing self.outputString to an empty string, if ANY condition fails the function avoids the heavy condition checks altogether
